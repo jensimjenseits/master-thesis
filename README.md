@@ -1,4 +1,4 @@
-# Master thesis python scripts and some SQL queries
+# Master thesis scripts
 The scripts I wrote for the data analysis in my master thesis.
 
 Includes:
