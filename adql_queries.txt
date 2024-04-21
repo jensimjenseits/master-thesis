@@ -1,0 +1,33 @@
+# create MySQL table so I can do the long crossidentification quicker using SQL (example)
+CREATE TABLE table_name( `ra` VARCHAR(35), `dec` VARCHAR(35), `sourceid` VARCHAR(35) NOT NULL, PRIMARY KEY(`sourceid`));
+
+# load data into it
+LOAD DATA INFILE '/var/lib/mysql-files/file.csv' INTO TABLE table_name FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
+
+# crossidentify our sample with data-driven metallicities by Andrae et al. (2023) to compare
+SELECT a.source_id, a.mh_xgboost, a.teff_xgboost, a.logg_xgboost, b.sourceid, b.FeHphot_gen, b.teff_gspphot, b.logg_gspphot, b.cahk0
+FROM data_driven_metallicities_andrae.fits a, 4MOST_S2_old.fits b
+WHERE a.source_id = b.sourceid
+
+
+# Gaia ADQL queries
+# download additional information from Gaia DR3 by identifying the objects with their given source ID
+SELECT a.source_id, a.ra, a.dec, a.parallax, a.parallax_error, a.pmra, a.pmra_error, a.pmdec, a.pmdec_error, a.ref_epoch, a.astrometric_params_solved, a.nu_eff_used_in_astrometry, a.pseudocolour, a.phot_g_mean_mag, a.phot_bp_mean_mag, a.phot_rp_mean_mag, a.radial_velocity, a.radial_velocity_error, a.ecl_lat, a.teff_gspphot, a.logg_gspphot, a.distance_gspphot, a.distance_gspphot_lower, a.distance_gspphot_upper, a.ebpminrp_gspphot, b.name, b.ra, b.dec, b.reddening, b.fe_h
+FROM gaiadr3.gaia_source a, user_jrichter.fourmost_input b
+WHERE a.source_id = b.source_id
+
+# GALAH DR3 crossmatch with whole Gaia DR3 (not just our table)
+SELECT a.*, b.source_id, b.ra, b.ra_error, b.dec, b.dec_error, b.parallax, b.parallax_error, b.pmra, b.pmra_error, b.pmdec, b.pmdec_error, b.l, b.b, b.ecl_lon, b.ecl_lat, b.nu_eff_used_in_astrometry, b.astrometric_params_solved, b.pseudocolor, b.phot_g_mean_mag, b.phot_bp_mean_mag, b.phot_rp_mean_mag
+FROM user_jrichter.galah_dr3 a, gaiadr3.gaia_source b
+WHERE a.dr3_source_id = b.source_id
+
+# download GSP-Spec abundances for the further chemo-kinematic analysis
+SELECT a.source_id, a.teff_gspspec, a.logg_gspspec, a.mh_gspspec, a.alphafe_gspspec, a.flags_gspspec, b.sourceid, b.ra, b.dec
+FROM gaiadr3.astrophysical_parameters a, user_jrichter.table1 b
+WHERE a.source_id = b.sourceid
+
+# ADQL query of Gaia DR2 to recreate Helmi et al. (2018) dataset
+SELECT a.source_id, a.ra, a.ra_error, a.dec, a.dec_error, a.parallax, a.parallax_error, a.parallax_over_error, a.pmra, a.pmra_error, a.pmdec, a.pmdec_error, a.phot_g_mean_mag, a.phot_bp_mean_mag, a.phot_rp_mean_mag, a.radial_velocity, a.radial_velocity_error, a.phot_bp_rp_excess_factor
+FROM gaiadr2.gaia_source a
+WHERE (a.parallax_over_error > 5) AND (radial_velocity IS NOT NULL)
+
