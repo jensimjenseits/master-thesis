@@ -2,8 +2,7 @@
 The scripts I wrote for the data analysis in my master thesis.
 
 Includes:
-- Chapter 4 - Verification of the 4MOST S2 catalogue
-  
+- Chapter 4 - Verification of the 4MOST S2 catalogue\n
   Analysis of datasets, verification of data using reference datasets via various methods, visualisation of results
 - Chapter 5 - Chemical and kinematic analysis
   More extensive analysis, modeling of potentials, fitting procedures, smoothing of data, cluster analysis of data
