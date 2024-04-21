@@ -14,7 +14,7 @@ Includes:
   
   Verification of some analysis methods via a reproduction of other works
   
-- Comparison ELemental Patterns - Full GALAH DR3
+- Comparison Elemental Patterns - Full GALAH DR3
   
   Extension of the final parts of Chapter 5 to the full Galah DR3 dataset
   
